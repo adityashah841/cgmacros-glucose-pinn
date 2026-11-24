@@ -4,6 +4,14 @@ Predicting how blood glucose responds to a meal, using a small physiological mod
 
 ![Post-meal glucose response by group](figures/01_meal_responses_by_group.png)
 
+## Articles
+
+A plain-language write-up of the project, in three parts on Medium:
+
+1. [Two Glucose Sensors, One Person, 33 mg/dL Apart](https://medium.com/@adityashah841/two-glucose-sensors-one-person-33-mg-dl-apart-ef7995aaa6e5): what the data shows before any modeling (`EDA.ipynb`)
+2. [A Good Fit Isn't the Same as the Right Answer](https://medium.com/@adityashah841/a-good-fit-isnt-the-same-as-the-right-answer-e056e7f8623f): the physics model and what its parameters reveal (`Modeling_1.ipynb`)
+3. [Physics Sets the Shape, the Network Fills the Gaps](https://medium.com/@adityashah841/physics-sets-the-shape-the-network-fills-the-gaps-d11ee689bedf): the classic PINN and the hybrid physics–neural model (`PINN_modeling.ipynb`)
+
 ## Results at a glance
 
 Held-out meals (each person's last 30% of meals), 36 participants, 234 test meals. Median per-meal error over the 3-hour post-meal curve:
@@ -25,6 +33,7 @@ Other results:
 - **New people, no calibration** (5-fold cross-validation by participant): 25.0 mg/dL for the hybrid vs 27.9 for the physics model.
 - **Per-person glucose clearance tracks HbA1c:** Spearman ρ = −0.72 for the hybrid (−0.61 for the physics model), robust to removing participants with discordant diagnostic labels and women under 45.
 - **Learned meal effects match physiology:** fat and fiber slow absorption (absorption peak moving from about 50 to over 120 minutes).
+- **Ranking meals by their 2-hour glucose rise (iAUC),** the metric most published studies report: Pearson r = 0.59 on all test meals (95% CI 0.49 to 0.69, resampling participants), vs 0.48 for the baseline and 0.47 for the physics model. In the setting used by a recent study on the same dataset ([Kondratyeva et al.](https://arxiv.org/abs/2609.24453): new participants, lunches only), the hybrid reaches r = 0.57 (0.51 on the log scale), vs their 0.59 to 0.67 without microbiome data, using no clinical inputs. Setups differ, so this is a like-for-like setting, not an identical benchmark.
 
 ## Key findings
 
@@ -57,13 +66,15 @@ Other results:
 
 ![Glucose clearance vs HbA1c](figures/07_clearance_vs_hba1c.png)
 
+![Predicted vs measured iAUC on held-out meals](figures/08_iauc_correlation.png)
+
 ## Notebooks
 
 | Notebook | Contents |
 |---|---|
 | [`EDA.ipynb`](notebooks/EDA.ipynb) | Loading and cleaning, sensor agreement, glucose patterns, meal quality, post-meal responses, activity, unrecorded confounders |
 | [`Modeling_1.ipynb`](notebooks/Modeling_1.ipynb) | Physics model: baselines, synthetic identifiability test, per-person fitting with empirical Bayes, clean-meal refit, calibration-free prediction, parameters vs HbA1c |
-| [`PINN_modeling.ipynb`](notebooks/PINN_modeling.ipynb) | Part A: classic PINN. Part B: hybrid physics–neural model, ablation, test evaluation with bootstrap confidence intervals, learned meal effects, new-person cross-validation |
+| [`PINN_modeling.ipynb`](notebooks/PINN_modeling.ipynb) | Part A: classic PINN. Part B: hybrid physics–neural model, ablation, test evaluation with bootstrap confidence intervals, learned meal effects, new-person cross-validation, iAUC comparison with published work |
 
 ## Reproducing
 
